@@ -22,8 +22,10 @@ export function Home() {
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
                     <h3 className="mb-4 flex items-center gap-2 font-semibold text-gray-800">
-                        <span className="text-purple-500">⬇️</span> Recent
-                        Downloads
+                        <span className="text-purple-500" aria-hidden="true">
+                            ⬇️
+                        </span>{' '}
+                        Recent Downloads
                     </h3>
                     <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50 py-8 text-center text-sm text-gray-500">
                         Your downloaded files will appear here
@@ -32,8 +34,10 @@ export function Home() {
 
                 <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
                     <h3 className="mb-4 flex items-center gap-2 font-semibold text-gray-800">
-                        <span className="text-emerald-500">✔️</span> Active
-                        Approvals
+                        <span className="text-emerald-500" aria-hidden="true">
+                            ✔️
+                        </span>{' '}
+                        Active Approvals
                     </h3>
                     <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50 py-8 text-center text-sm text-gray-500">
                         No pending permissions
