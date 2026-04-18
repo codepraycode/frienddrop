@@ -1,9 +1,12 @@
 import { createClient } from '@libsql/client';
 import path from 'path';
 import fs from 'fs';
-import { pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
-const dbDir = path.join(process.cwd(), 'data');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const dbDir = process.env.DB_DIR || path.join(__dirname, '..', '..', 'data');
 
 export const db = createClient({
     url: pathToFileURL(path.join(dbDir, 'frienddrop.db')).href,
