@@ -15,6 +15,11 @@ pull request reviews in this hobby project.
 
 ## PR Review Expectations
 
+- **Holistic & Consolidated Reviews**: Do not leave piecemeal or iterative
+  comments. Review the entire PR and leave all necessary feedback in a single
+  pass. If an issue exists in one package (e.g., missing TS config options like
+  `composite: true`), affirmatively check all other packages in the monorepo and
+  consolidate the feedback.
 - **Do Not Nitpick**: Avoid blocking or overly criticizing minor stylistic
   choices, minor performance optimizations, or hyper-optimized refactoring.
 - **Focus on Functional Bugs**: Direct review focus toward obvious logic errors,
