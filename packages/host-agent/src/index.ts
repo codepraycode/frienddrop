@@ -2,7 +2,7 @@ import express from 'express';
 import { initDb } from './db/index.js';
 import { healthCheck } from './routes/health.js';
 
-const PORT = Number(process.env.HOST_PORT) || 4242;
+import { config } from './config.js';
 
 async function bootstrap() {
     // Initialize SQLite database
@@ -21,9 +21,9 @@ async function bootstrap() {
         res.status(404).json({ error: 'Not Found' });
     });
 
-    app.listen(PORT, () => {
+    app.listen(config.PORT, () => {
         console.log(
-            `FriendDrop host-agent running on http://localhost:${PORT}`,
+            `FriendDrop host-agent running on http://localhost:${config.PORT}`,
         );
     });
 }
