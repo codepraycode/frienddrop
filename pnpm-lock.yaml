@@ -32,6 +32,9 @@ importers:
 
   packages/client:
     dependencies:
+      '@frienddrop/shared':
+        specifier: workspace:*
+        version: link:../shared
       react:
         specifier: ^19.2.4
         version: 19.2.5
@@ -84,6 +87,9 @@ importers:
 
   packages/host-agent:
     dependencies:
+      '@frienddrop/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@libsql/client':
         specifier: ^0.17.2
         version: 0.17.2
@@ -109,7 +115,13 @@ importers:
       '@noble/curves':
         specifier: ^1.8.0
         version: 1.9.7
+      '@noble/hashes':
+        specifier: ^1.7.0
+        version: 1.8.0
     devDependencies:
+      '@types/node':
+        specifier: ^24.12.2
+        version: 24.12.2
       typescript:
         specifier: ^5.9.3
         version: 5.9.3

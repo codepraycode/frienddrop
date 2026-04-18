@@ -8,9 +8,12 @@
         "build": "tsc -b && vite build",
         "lint": "eslint .",
         "format": "prettier --write \"**/*.{ts,tsx,js,cjs,mjs,css,html,json}\"",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "test": "echo \"No test specified\"",
+        "typecheck": "tsc --noEmit"
     },
     "dependencies": {
+        "@frienddrop/shared": "workspace:*",
         "react": "^19.2.4",
         "react-dom": "^19.2.4"
     },

@@ -9,7 +9,9 @@
         "dev:host": "turbo run dev --filter=host-agent",
         "build": "turbo run build",
         "lint": "turbo run lint",
-        "format": "turbo run format"
+        "format": "turbo run format",
+        "typecheck": "turbo run typecheck",
+        "test": "turbo run test"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.4",

@@ -14,12 +14,16 @@
         "build": "tsc",
         "dev": "tsc -w",
         "lint": "eslint src/",
-        "format": "prettier --write \"src/**/*.{ts,tsx}\""
+        "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+        "test": "echo \"No test specified\"",
+        "typecheck": "tsc --noEmit"
     },
     "dependencies": {
-        "@noble/curves": "^1.8.0"
+        "@noble/curves": "^1.8.0",
+        "@noble/hashes": "^1.7.0"
     },
     "devDependencies": {
+        "@types/node": "^24.12.2",
         "typescript": "^5.9.3"
     }
 }
