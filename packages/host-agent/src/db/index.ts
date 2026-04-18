@@ -9,7 +9,7 @@ if (!fs.existsSync(dbDir)) {
 }
 
 export const db = createClient({
-    url: `file:${path.join(dbDir, 'frienddrop.db')}`
+    url: `file:${path.join(dbDir, 'frienddrop.db')}`,
 });
 
 export async function initDb() {

@@ -2,7 +2,7 @@ import express from 'express';
 import { initDb } from './db/index.js';
 import { healthCheck } from './routes/health.js';
 
-const PORT = process.env.PORT || 4000;
+const PORT = Number(process.env.PORT) || 4000;
 
 async function bootstrap() {
     // Initialize SQLite database
