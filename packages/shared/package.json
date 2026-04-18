@@ -16,10 +16,10 @@
         "lint": "eslint src/",
         "format": "prettier --write \"src/**/*.{ts,tsx}\""
     },
-  "dependencies": {
-    "@noble/curves": "^1.8.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.3"
-  }
+    "dependencies": {
+        "@noble/curves": "^1.8.0"
+    },
+    "devDependencies": {
+        "typescript": "^5.9.3"
+    }
 }
