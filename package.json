@@ -1,0 +1,21 @@
+{
+  "name": "frienddrop",
+  "private": true,
+  "version": "0.1.0",
+  "description": "LAN-first P2P file sharing — AirDrop alternative",
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:client": "turbo run dev --filter=client",
+    "dev:host": "turbo run dev --filter=host-agent",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "format": "turbo run format"
+  },
+  "devDependencies": {
+    "turbo": "latest",
+    "typescript": "^5.8.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.5.0"
+  },
+  "packageManager": "pnpm@10.0.0"
+}
