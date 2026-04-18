@@ -43,5 +43,21 @@ packages located in `packages/`:
   `index.css` global theme variables).
 - **Tooling**: Ensure ESLint (v9+) and Prettier configurations are respected.
   Run `pnpm run format` if you need to auto-format.
-- **Backend Database**: Interactions with SQLite should use `@libsql/client` to
+- Backend Database: Interactions with SQLite should use `@libsql/client` to
   avoid native build issues across environments.
+
+## PR Review & Coding Style (Hobby Project Guidelines)
+
+- **Simplicity First**: Favor simple, readable over complex abstractions. Don't
+  over-engineer for scaling issues we don't have yet.
+- **Focus on the Happy Path**: It's okay to skip extensive edge-case error
+  handling right now.
+- **Review Expectations**: When reviewing PRs, try not to nitpick. Focus reviews
+  on logic errors, obvious bugs, and ensuring the UI functions and looks decent.
+  Minor stylistic or refactoring comments can be left as suggestions but should
+  not block merges.
+- **Commit Messages**: No strict conventional commits needed, but ensure
+  messages clearly state what was changed.
+- **Tests**: Automated tests are great, but manual testing is currently
+  sufficient if it means moving faster. No need to mandate coverage unless a
+  specific tool requires it.
