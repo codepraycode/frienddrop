@@ -1,0 +1,31 @@
+{
+    "name": "host-agent",
+    "version": "1.0.0",
+    "description": "",
+    "main": "./dist/index.js",
+    "type": "module",
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "tsc -b",
+        "start": "node dist/index.js",
+        "lint": "eslint src/",
+        "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@libsql/client": "^0.17.2",
+        "express": "^5.2.1"
+    },
+    "devDependencies": {
+        "tsx": "^4.21.0",
+        "@types/express": "^5.0.6",
+        "typescript": "^5.9.3",
+        "@types/node": "^24.12.2"
+    }
+}

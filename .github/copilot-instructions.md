@@ -1,0 +1,80 @@
+# FriendDrop AI Coding Agent Instructions
+
+This document outlines the core architecture, conventions, and workflows for the
+FriendDrop project to help AI agents be productive.
+
+## Project Architecture & Monorepo Structure
+
+FriendDrop is a LAN-first P2P file sharing project (AirDrop alternative) built
+as a `pnpm` monorepo orchestrated with `turborepo`. It contains three primary
+packages located in `packages/`:
+
+- **`packages/client`**: The frontend React Single Page Application (SPA).
+    - Built with Vite and Tailwind CSS v4 (`@tailwindcss/vite`).
+    - Tailwind is configured via the `@import "tailwindcss";` directive in
+      `src/index.css` (no `tailwind.config.js`).
+- **`packages/host-agent`**: The backend Node.js service.
+    - Built with Express and `@libsql/client`.
+    - Manages permissions, file serving, folder watching, and download
+      approvals.
+- **`packages/shared`**: Shared TypeScript types, utility functions, and
+  cryptographic routines utilized by both host and client.
+
+## Developer Workflows & Commands
+
+- **Dependency Management**: Always use `pnpm`. Install root dependencies
+  directly, or workspace specific dependencies from the root using `--filter`
+  (e.g., `pnpm add express --filter=host-agent`) or by `cd`ing into the package
+  directory.
+- **Running the Application**:
+    - Full stack: `pnpm run dev` (Runs turbo dev pipeline)
+    - Client only: `pnpm run dev:client`
+    - Host only: `pnpm run dev:host`
+- **Building and Linting**: Use `pnpm run build` and `pnpm run lint` from the
+  root workspace.
+
+## Autonomous Verification & Self-Correction (CRITICAL)
+
+- **Holistic Fixes**: Do not just fix the symptom of a problem in one file.
+  Actively search the workspace to see if the issue applies to other packages
+  (`shared`, `client`, `host-agent`) and apply the fix uniformly.
+- **Verify Before Finishing**: Never assume a code change works perfectly out of
+  the box. You MUST use the terminal to run `pnpm build` and `pnpm lint` (or
+  relevant `tsc` checks) _after_ making modifications and _before_ concluding
+  your response.
+- **Iterative Self-Correction**: If a terminal command fails (e.g., a build
+  error like missing `composite: true` in another `tsconfig`, or a formatting
+  rule violation), analyze the error and fix it immediately. Do not wait for the
+  user to point out the build failure or syntax error. Present the final,
+  fully-working state to the user.
+- **Check Dependencies**: When making dependency updates or TS config edits,
+  consider how those changes interact across a `pnpm` monorepo.
+
+## Coding Conventions
+
+- **TypeScript**: Used strictly across all packages. Avoid `any` types. Prefer
+  exact typings and define interfaces/schemas in `packages/shared` when used
+  across stack boundaries.
+- **Frontend Styling**: Use Tailwind CSS functional utility classes entirely.
+  Avoid adding CSS unless completely unavoidable (such as for specialized
+  `index.css` global theme variables).
+- **Tooling**: Ensure ESLint (v9+) and Prettier configurations are respected.
+  Run `pnpm run format` if you need to auto-format.
+- Backend Database: Interactions with SQLite should use `@libsql/client` to
+  avoid native build issues across environments.
+
+## PR Review & Coding Style (Hobby Project Guidelines)
+
+- **Simplicity First**: Favor simple, readable over complex abstractions. Don't
+  over-engineer for scaling issues we don't have yet.
+- **Focus on the Happy Path**: It's okay to skip extensive edge-case error
+  handling right now.
+- **Review Expectations**: When reviewing PRs, try not to nitpick. Focus reviews
+  on logic errors, obvious bugs, and ensuring the UI functions and looks decent.
+  Minor stylistic or refactoring comments can be left as suggestions but should
+  not block merges.
+- **Commit Messages**: No strict conventional commits needed, but ensure
+  messages clearly state what was changed.
+- **Tests**: Automated tests are great, but manual testing is currently
+  sufficient if it means moving faster. No need to mandate coverage unless a
+  specific tool requires it.
