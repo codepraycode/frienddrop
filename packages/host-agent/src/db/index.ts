@@ -1,18 +1,19 @@
 import { createClient } from '@libsql/client';
 import path from 'path';
 import fs from 'fs';
+import { pathToFileURL } from 'url';
 
 const dbDir = path.join(process.cwd(), 'data');
 
-if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-}
-
 export const db = createClient({
-    url: `file:${path.join(dbDir, 'frienddrop.db')}`,
+    url: pathToFileURL(path.join(dbDir, 'frienddrop.db')).href,
 });
 
 export async function initDb() {
+    if (!fs.existsSync(dbDir)) {
+        fs.mkdirSync(dbDir, { recursive: true });
+    }
+
     await db.executeMultiple(`
         CREATE TABLE IF NOT EXISTS contacts (
             id TEXT PRIMARY KEY,
