@@ -33,6 +33,23 @@ packages located in `packages/`:
 - **Building and Linting**: Use `pnpm run build` and `pnpm run lint` from the
   root workspace.
 
+## Autonomous Verification & Self-Correction (CRITICAL)
+
+- **Holistic Fixes**: Do not just fix the symptom of a problem in one file.
+  Actively search the workspace to see if the issue applies to other packages
+  (`shared`, `client`, `host-agent`) and apply the fix uniformly.
+- **Verify Before Finishing**: Never assume a code change works perfectly out of
+  the box. You MUST use the terminal to run `pnpm build` and `pnpm lint` (or
+  relevant `tsc` checks) _after_ making modifications and _before_ concluding
+  your response.
+- **Iterative Self-Correction**: If a terminal command fails (e.g., a build
+  error like missing `composite: true` in another `tsconfig`, or a formatting
+  rule violation), analyze the error and fix it immediately. Do not wait for the
+  user to point out the build failure or syntax error. Present the final,
+  fully-working state to the user.
+- **Check Dependencies**: When making dependency updates or TS config edits,
+  consider how those changes interact across a `pnpm` monorepo.
+
 ## Coding Conventions
 
 - **TypeScript**: Used strictly across all packages. Avoid `any` types. Prefer
