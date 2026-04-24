@@ -31,7 +31,8 @@ export async function initDb() {
             deviceId TEXT NOT NULL,
             username TEXT NOT NULL,
             publicKey TEXT NOT NULL,
-            privateKey TEXT NOT NULL
+            privateKey TEXT NOT NULL,
+            createdAt INTEGER NOT NULL
         );
     `);
 }

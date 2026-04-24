@@ -8,7 +8,7 @@ import os from 'os';
  */
 export async function getOrInitializeIdentity() {
     const existing = await db.execute('SELECT * FROM identity WHERE id = 1');
-    
+
     if (existing.rows.length > 0) {
         return existing.rows[0];
     }
@@ -18,10 +18,11 @@ export async function getOrInitializeIdentity() {
     const { publicKey, privateKey } = generateKeypair();
     const deviceId = crypto.randomUUID();
     const username = os.userInfo().username || 'FriendDrop User';
+    const timeCreated = Date.now();
 
     await db.execute({
-        sql: 'INSERT INTO identity (id, deviceId, username, publicKey, privateKey) VALUES (1, ?, ?, ?, ?)',
-        args: [deviceId, username, publicKey, privateKey]
+        sql: 'INSERT INTO identity (id, deviceId, username, publicKey, privateKey, createdAt) VALUES (1, ?, ?, ?, ?, ?)',
+        args: [deviceId, username, publicKey, privateKey, timeCreated],
     });
 
     return {
@@ -29,6 +30,5 @@ export async function getOrInitializeIdentity() {
         deviceId,
         username,
         publicKey,
-        privateKey
     };
 }

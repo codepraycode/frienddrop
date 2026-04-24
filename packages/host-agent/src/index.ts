@@ -1,9 +1,9 @@
 import express from 'express';
-import { initDb } from './db';
-import { getOrInitializeIdentity } from './identity';
-import { healthCheck } from './routes/health';
+import { initDb } from './db/index.js';
+import { getOrInitializeIdentity } from './identity.js';
+import { healthCheck } from './routes/health.js';
 
-import { config } from './config';
+import { config } from './config.js';
 
 async function bootstrap() {
     // Initialize SQLite database
