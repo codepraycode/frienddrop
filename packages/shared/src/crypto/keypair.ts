@@ -1,5 +1,46 @@
 import * as ed from '@noble/curves/ed25519';
 
+declare const Buffer: {
+    from(
+        data: string | Uint8Array,
+        encoding?: string,
+    ): {
+        toString(encoding?: string): string;
+        length: number;
+        [key: number]: number;
+    };
+};
+
+/**
+ * Universal base64 encoder that handles both Node and browser environments.
+ */
+function bytesToBase64(bytes: Uint8Array): string {
+    if (typeof Buffer !== 'undefined') {
+        return Buffer.from(bytes).toString('base64');
+    }
+    let binary = '';
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+}
+
+/**
+ * Universal base64 decoder.
+ */
+function base64ToBytes(base64: string): Uint8Array {
+    if (typeof Buffer !== 'undefined') {
+        return new Uint8Array(Buffer.from(base64, 'base64'));
+    }
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+}
+
 /**
  * Generates an Ed25519 keypair for device pairing.
  */
@@ -12,8 +53,8 @@ export function generateKeypair(): {
 
     return {
         // Base64 is used for storage and transport
-        privateKey: Buffer.from(privateKeyBytes).toString('base64'),
-        publicKey: Buffer.from(publicKeyBytes).toString('base64'),
+        privateKey: bytesToBase64(privateKeyBytes),
+        publicKey: bytesToBase64(publicKeyBytes),
     };
 }
 
@@ -43,10 +84,10 @@ export function signRequest(params: {
 }): string {
     const canonical = getCanonicalString(params);
     const message = new TextEncoder().encode(canonical);
-    const privateKeyBytes = Buffer.from(params.privateKey, 'base64');
+    const privateKeyBytes = base64ToBytes(params.privateKey);
 
     const signatureBytes = ed.ed25519.sign(message, privateKeyBytes);
-    return Buffer.from(signatureBytes).toString('base64');
+    return bytesToBase64(signatureBytes);
 }
 
 /**
@@ -62,8 +103,8 @@ export function verifyRequest(params: {
 }): boolean {
     const canonical = getCanonicalString(params);
     const message = new TextEncoder().encode(canonical);
-    const signatureBytes = Buffer.from(params.signature, 'base64');
-    const publicKeyBytes = Buffer.from(params.publicKey, 'base64');
+    const signatureBytes = base64ToBytes(params.signature);
+    const publicKeyBytes = base64ToBytes(params.publicKey);
 
     return ed.ed25519.verify(signatureBytes, message, publicKeyBytes);
 }

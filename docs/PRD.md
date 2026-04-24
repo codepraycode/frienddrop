@@ -471,9 +471,9 @@ All messages are JSON with a `type` field.
 ### 9.2 HTTP Endpoints (Host Agent)
 
 ```
-GET /files?path=<path> List files in a directory (requires valid token)
-GET /download?path=<path> Download a file (supports Range header)
-GET /health Relay uses this to confirm host is alive
+GET /api/files?path=<path> List files in a directory (requires valid token)
+GET /api/download?path=<path> Download a file (supports Range header)
+GET /api/health Relay uses this to confirm host is alive
 ```
 
 ## All endpoints validate a `X-Transfer-Token` header issued by the relay.

@@ -115,9 +115,6 @@ importers:
       '@noble/curves':
         specifier: ^1.8.0
         version: 1.9.7
-      '@noble/hashes':
-        specifier: ^1.7.0
-        version: 1.8.0
     devDependencies:
       '@types/node':
         specifier: ^24.12.2

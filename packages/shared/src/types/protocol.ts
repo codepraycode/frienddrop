@@ -1,3 +1,5 @@
+import type { FileNode } from './file-node.js';
+
 /**
  * Stub definitions for Phase 1B (Relay Server WebSocket types).
  * Not used in Phase 1A LAN-only HTTP calls.
@@ -21,7 +23,7 @@ export type WebSocketMessage =
           type: 'FILE_TREE_RESPONSE';
           requesterDeviceId: string;
           path: string;
-          tree: unknown;
+          tree: FileNode[];
       }
     | {
           type: 'DOWNLOAD_REQUEST';

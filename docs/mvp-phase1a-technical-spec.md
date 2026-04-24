@@ -1134,7 +1134,7 @@ pnpm dev:client  # Starts Vite on http://localhost:5173
 
 ```bash
 # Check the host-agent is running
-curl http://localhost:4242/health
+curl http://localhost:4242/api/health
 # Expected: {"status":"ok","deviceId":"...","username":"..."}
 
 # Open the client
@@ -1155,7 +1155,6 @@ curl http://localhost:4242/health
 ```bash
 pnpm lint      # ESLint across all packages
 pnpm typecheck # tsc --noEmit across all packages
-pnpm test      # Run all unit tests (Vitest)
 ```
 
 ---
