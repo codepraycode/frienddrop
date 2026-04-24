@@ -430,14 +430,19 @@ Supports HTTP Range requests for resumable downloads.
 
 ### 6.1 Keypair generation
 
-Algorithm: **Ed25519** via `@noble/ed25519`.
+Algorithm: **Ed25519**.
+
+> Note: The following snippet is **illustrative pseudocode / planned flow**
+> for  
+> keypair generation. It is **not** a verbatim copy of the current  
+> `packages/shared/src/crypto/keypair.ts` implementation.
 
 ```typescript
-// packages/shared/src/crypto/keypair.ts
+// Illustrative pseudocode only — actual package names and helper APIs may differ
 
 import { ed25519 } from '@noble/curves/ed25519';
 
-export async function generateKeypair(): Promise<{
+export async function generateKeypairExample(): Promise<{
     publicKey: string;
     privateKey: string;
 }> {
