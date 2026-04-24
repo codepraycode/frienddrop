@@ -26,5 +26,12 @@ export async function initDb() {
             allowRead INTEGER DEFAULT 1,
             allowWrite INTEGER DEFAULT 0
         );
+        CREATE TABLE IF NOT EXISTS identity (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            deviceId TEXT NOT NULL,
+            username TEXT NOT NULL,
+            publicKey TEXT NOT NULL,
+            privateKey TEXT NOT NULL
+        );
     `);
 }

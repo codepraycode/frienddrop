@@ -1,12 +1,19 @@
 import express from 'express';
-import { initDb } from './db/index.js';
-import { healthCheck } from './routes/health.js';
+import { initDb } from './db';
+import { getOrInitializeIdentity } from './identity';
+import { healthCheck } from './routes/health';
 
-import { config } from './config.js';
+import { config } from './config';
 
 async function bootstrap() {
     // Initialize SQLite database
     await initDb();
+
+    // Ensure device identity is initialized
+    const identity = await getOrInitializeIdentity();
+    console.log(
+        `Identity initialized for device: ${identity.deviceId} (${identity.username})`,
+    );
 
     const app = express();
 
