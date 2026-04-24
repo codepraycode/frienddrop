@@ -1,21 +1,16 @@
 import { createClient } from '@libsql/client';
 import path from 'path';
 import fs from 'fs';
-import { fileURLToPath, pathToFileURL } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const dbDir =
-    process.env.HOST_DB_DIR || path.join(__dirname, '..', '..', 'data');
+import { pathToFileURL } from 'url';
+import { config } from '../config.js';
 
 export const db = createClient({
-    url: pathToFileURL(path.join(dbDir, 'frienddrop.db')).href,
+    url: pathToFileURL(path.join(config.DB_DIR, 'frienddrop.db')).href,
 });
 
 export async function initDb() {
-    if (!fs.existsSync(dbDir)) {
-        fs.mkdirSync(dbDir, { recursive: true });
+    if (!fs.existsSync(config.DB_DIR)) {
+        fs.mkdirSync(config.DB_DIR, { recursive: true });
     }
 
     await db.executeMultiple(`

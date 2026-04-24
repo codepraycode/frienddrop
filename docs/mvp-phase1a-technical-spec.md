@@ -40,24 +40,24 @@ be additive — they will not require rewriting Phase 1A code.
 
 ### Backend — Host Agent
 
-| Concern       | Choice                                             | Rationale                                                                         |
-| ------------- | -------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Runtime       | Node.js 20 LTS                                     | Stable, good `fs` streaming APIs, widely understood                               |
-| Language      | TypeScript 5                                       | Shared types with client via `@frienddrop/shared`                                 |
-| HTTP server   | Express 4                                          | Simple, mature, well-documented middleware model                                  |
-| Database      | SQLite via `better-sqlite3`                        | Local-only storage, zero setup, synchronous API (correct for single-process Node) |
-| Crypto        | `@noble/ed25519`                                   | Pure JS, works in Node + browser, audited, no native bindings                     |
-| Checksum      | Node.js built-in `crypto` (`createHash('sha256')`) | No external dependency needed                                                     |
-| File watching | Node.js built-in `fs.watch`                        | Sufficient for v1; chokidar in v2 if needed                                       |
+| Concern       | Choice                                             | Rationale                                                                  |
+| ------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
+| Runtime       | Node.js 20 LTS                                     | Stable, good `fs` streaming APIs, widely understood                        |
+| Language      | TypeScript 6                                       | Shared types with client via `@frienddrop/shared`                          |
+| HTTP server   | Express 5                                          | Simple, mature, well-documented middleware model                           |
+| Database      | SQLite via `@libsql/client`                        | Local-only storage, zero setup, avoid native build issues across platforms |
+| Crypto        | `@noble/curves` (Ed25519)                          | Pure JS, works in Node + browser, audited, no native bindings              |
+| Checksum      | Node.js built-in `crypto` (`createHash('sha256')`) | No external dependency needed                                              |
+| File watching | Node.js built-in `fs.watch`                        | Sufficient for v1; chokidar in v2 if needed                                |
 
 ### Frontend — Client App
 
 | Concern           | Choice                          | Rationale                                                       |
 | ----------------- | ------------------------------- | --------------------------------------------------------------- |
-| Bundler           | Vite 5                          | Fast dev server, instant HMR, excellent TypeScript support      |
-| UI framework      | React 18                        | Familiar, large ecosystem                                       |
-| Language          | TypeScript 5                    | Same as host-agent; shared types from `@frienddrop/shared`      |
-| Styling           | Tailwind CSS v3                 | Utility-first, no runtime overhead                              |
+| Bundler           | Vite 8                          | Fast dev server, instant HMR, excellent TypeScript support      |
+| UI framework      | React 19                        | Familiar, large ecosystem                                       |
+| Language          | TypeScript 6                    | Same as host-agent; shared types from `@frienddrop/shared`      |
+| Styling           | Tailwind CSS v4                 | Utility-first, no runtime overhead                              |
 | State management  | Zustand                         | Minimal boilerplate; download manager state lives here          |
 | Server state      | TanStack Query (React Query v5) | Handles loading/error/stale states for file tree fetching       |
 | Local persistence | IndexedDB via `idb` wrapper     | Persists file tree cache and download manifests across sessions |
@@ -296,7 +296,7 @@ All protected endpoints require two headers:
 | `X-Device-Id` | The requester's `deviceId` (UUID)                                   |
 | `X-Signature` | Ed25519 signature of the canonical request string (see Section 6.3) |
 
-### `GET /health`
+### `GET /api/health`
 
 No authentication required.
 
@@ -1115,12 +1115,14 @@ pnpm install
 # 3. Build the shared package first (both client and host-agent depend on it)
 pnpm --filter @frienddrop/shared build
 
-# 4. Copy the example env files
-cp packages/host-agent/.env.example packages/host-agent/.env
-
-# Edit the .env file if you want non-default values
-# HOST_PORT=4242 is the default and works fine for development
-
+# 4. Review the example env file for available host-agent settings
+# NOTE: the current host-agent dev/start scripts do NOT automatically load
+# packages/host-agent/.env, so copying .env.example to .env is not enough.
+# Export any non-default values in your shell before starting the app.
+# HOST_PORT=4242 is the default and works fine for development.
+#
+# Example:
+export HOST_PORT=4242
 # 5. Start both client and host-agent in parallel (from the root)
 pnpm dev
 # This runs: pnpm dev:client and pnpm dev:host concurrently
@@ -1135,7 +1137,8 @@ pnpm dev:client  # Starts Vite on http://localhost:5173
 ```bash
 # Check the host-agent is running
 curl http://localhost:4242/api/health
-# Expected: {"status":"ok","deviceId":"...","username":"..."}
+# Expected: {"status":"UP","service":"...","timestamp":"..."}
+
 
 # Open the client
 # Navigate to http://localhost:5173 in Chrome or Safari

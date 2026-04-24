@@ -1,21 +1,25 @@
 import * as ed from '@noble/curves/ed25519';
 
-declare const Buffer: {
-    from(
-        data: string | Uint8Array,
-        encoding?: string,
-    ): {
-        toString(encoding?: string): string;
-        length: number;
-        [key: number]: number;
+interface GlobalWithBuffer {
+    Buffer?: {
+        from(
+            data: string | Uint8Array,
+            encoding?: string,
+        ): { toString(encoding?: string): string; [index: number]: number; length: number };
     };
-};
+}
+
+const getBuffer = () =>
+    typeof globalThis !== 'undefined'
+        ? (globalThis as unknown as GlobalWithBuffer).Buffer
+        : undefined;
 
 /**
  * Universal base64 encoder that handles both Node and browser environments.
  */
 function bytesToBase64(bytes: Uint8Array): string {
-    if (typeof Buffer !== 'undefined') {
+    const Buffer = getBuffer();
+    if (Buffer) {
         return Buffer.from(bytes).toString('base64');
     }
     let binary = '';
@@ -30,8 +34,10 @@ function bytesToBase64(bytes: Uint8Array): string {
  * Universal base64 decoder.
  */
 function base64ToBytes(base64: string): Uint8Array {
-    if (typeof Buffer !== 'undefined') {
-        return new Uint8Array(Buffer.from(base64, 'base64'));
+    const Buffer = getBuffer();
+    if (Buffer) {
+        const buf = Buffer.from(base64, 'base64');
+        return new Uint8Array(buf as unknown as Iterable<number>);
     }
     const binary = atob(base64);
     const bytes = new Uint8Array(binary.length);

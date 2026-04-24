@@ -4,12 +4,24 @@ export interface InvitePayload {
     username: string;
 }
 
+interface GlobalWithBuffer {
+    Buffer?: {
+        from(data: string, encoding?: string): { toString(encoding?: string): string };
+    };
+}
+
+const getBuffer = () =>
+    typeof globalThis !== 'undefined'
+        ? (globalThis as unknown as GlobalWithBuffer).Buffer
+        : undefined;
+
 /**
  * Helper to do base64url encoding purely in JS to support both browser and Node.
  */
 function base64urlEncode(str: string): string {
     let base64: string;
-    if (typeof Buffer !== 'undefined') {
+    const Buffer = getBuffer();
+    if (Buffer) {
         base64 = Buffer.from(str).toString('base64');
     } else {
         base64 = btoa(
@@ -33,7 +45,8 @@ function base64urlDecode(str: string): string {
         base64 += '=';
     }
 
-    if (typeof Buffer !== 'undefined') {
+    const Buffer = getBuffer();
+    if (Buffer) {
         return Buffer.from(base64, 'base64').toString('utf8');
     } else {
         return decodeURIComponent(
@@ -57,11 +70,32 @@ export function encodeInviteCode(identity: InvitePayload): string {
     return base64urlEncode(payload);
 }
 
+function isInvitePayload(value: unknown): value is InvitePayload {
+    if (typeof value !== 'object' || value === null) {
+        return false;
+    }
+
+    const payload = value as Record<string, unknown>;
+    return (
+        typeof payload.publicKey === 'string' &&
+        typeof payload.deviceId === 'string' &&
+        typeof payload.username === 'string'
+    );
+}
+
 /**
  * Decodes an invite code back into identity information.
  * Throws if the code is invalid.
  */
 export function decodeInviteCode(code: string): InvitePayload {
     const payload = base64urlDecode(code);
-    return JSON.parse(payload) as InvitePayload;
+    const parsedPayload: unknown = JSON.parse(payload);
+
+    if (!isInvitePayload(parsedPayload)) {
+        throw new Error(
+            'Invalid invite payload: expected publicKey, deviceId, and username to be strings.',
+        );
+    }
+
+    return parsedPayload;
 }
