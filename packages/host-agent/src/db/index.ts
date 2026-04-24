@@ -1,18 +1,15 @@
 import { createClient } from '@libsql/client';
 import path from 'path';
 import fs from 'fs';
-import { fileURLToPath, pathToFileURL } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const dbDir = process.env.DB_DIR || path.join(__dirname, '..', '..', 'data');
+import { pathToFileURL } from 'url';
+import { config } from '../config.js';
 
 export const db = createClient({
-    url: pathToFileURL(path.join(dbDir, 'frienddrop.db')).href,
+    url: pathToFileURL(config.DB_PATH).href,
 });
 
 export async function initDb() {
+    const dbDir = path.dirname(config.DB_PATH);
     if (!fs.existsSync(dbDir)) {
         fs.mkdirSync(dbDir, { recursive: true });
     }
@@ -28,6 +25,14 @@ export async function initDb() {
             folderPath TEXT NOT NULL,
             allowRead INTEGER DEFAULT 1,
             allowWrite INTEGER DEFAULT 0
+        );
+        CREATE TABLE IF NOT EXISTS identity (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            deviceId TEXT NOT NULL,
+            username TEXT NOT NULL,
+            publicKey TEXT NOT NULL,
+            privateKey TEXT NOT NULL,
+            createdAt INTEGER NOT NULL
         );
     `);
 }
