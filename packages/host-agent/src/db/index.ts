@@ -5,12 +5,13 @@ import { pathToFileURL } from 'url';
 import { config } from '../config.js';
 
 export const db = createClient({
-    url: pathToFileURL(path.join(config.DB_DIR, 'frienddrop.db')).href,
+    url: pathToFileURL(config.DB_PATH).href,
 });
 
 export async function initDb() {
-    if (!fs.existsSync(config.DB_DIR)) {
-        fs.mkdirSync(config.DB_DIR, { recursive: true });
+    const dbDir = path.dirname(config.DB_PATH);
+    if (!fs.existsSync(dbDir)) {
+        fs.mkdirSync(dbDir, { recursive: true });
     }
 
     await db.executeMultiple(`

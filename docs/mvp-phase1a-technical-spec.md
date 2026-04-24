@@ -435,18 +435,14 @@ Algorithm: **Ed25519** via `@noble/ed25519`.
 ```typescript
 // packages/shared/src/crypto/keypair.ts
 
-import * as ed from '@noble/ed25519';
-import { sha512 } from '@noble/hashes/sha512';
-
-// noble/ed25519 v2 requires this in Node.js
-ed.etc.sha512Sync = (...m) => sha512(...m);
+import { ed25519 } from '@noble/curves/ed25519';
 
 export async function generateKeypair(): Promise<{
     publicKey: string;
     privateKey: string;
 }> {
-    const privateKeyBytes = ed.utils.randomPrivateKey();
-    const publicKeyBytes = await ed.getPublicKeyAsync(privateKeyBytes);
+    const privateKeyBytes = ed25519.utils.randomSecretKey();
+    const publicKeyBytes = ed25519.getPublicKey(privateKeyBytes);
     return {
         privateKey: Buffer.from(privateKeyBytes).toString('base64'),
         publicKey: Buffer.from(publicKeyBytes).toString('base64'),
