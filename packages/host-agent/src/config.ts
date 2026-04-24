@@ -20,7 +20,7 @@ function validateEnv() {
     }
 
     if (process.env.HOST_DB_PATH) {
-        config.DB_PATH = process.env.HOST_DB_PATH;
+        config.DB_PATH = path.resolve(process.env.HOST_DB_PATH);
     }
 
     if (process.env.HOST_LOG_LEVEL) {

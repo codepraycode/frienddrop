@@ -5,7 +5,7 @@ interface GlobalWithBuffer {
         from(
             data: string | Uint8Array,
             encoding?: string,
-        ): { toString(encoding?: string): string; [index: number]: number; length: number };
+        ): Uint8Array & { toString(encoding?: string): string };
     };
 }
 
@@ -36,8 +36,7 @@ function bytesToBase64(bytes: Uint8Array): string {
 function base64ToBytes(base64: string): Uint8Array {
     const Buffer = getBuffer();
     if (Buffer) {
-        const buf = Buffer.from(base64, 'base64');
-        return new Uint8Array(buf as unknown as Iterable<number>);
+        return Buffer.from(base64, 'base64');
     }
     const binary = atob(base64);
     const bytes = new Uint8Array(binary.length);

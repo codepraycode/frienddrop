@@ -6,7 +6,10 @@ export interface InvitePayload {
 
 interface GlobalWithBuffer {
     Buffer?: {
-        from(data: string, encoding?: string): { toString(encoding?: string): string };
+        from(
+            data: string,
+            encoding?: string,
+        ): { toString(encoding?: string): string };
     };
 }
 
@@ -27,7 +30,7 @@ function base64urlEncode(str: string): string {
         base64 = btoa(
             encodeURIComponent(str).replace(
                 /%([0-9A-F]{2})/g,
-                function toSolidBytes(_match, p1) {
+                (_match: string, p1: string) => {
                     return String.fromCharCode(Number('0x' + p1));
                 },
             ),
@@ -52,7 +55,7 @@ function base64urlDecode(str: string): string {
         return decodeURIComponent(
             atob(base64)
                 .split('')
-                .map(function (c) {
+                .map((c) => {
                     return (
                         '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
                     );
