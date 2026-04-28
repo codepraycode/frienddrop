@@ -66,9 +66,13 @@ export function generateKeypair(): {
 }
 
 /**
- * Normalizes HTTP parameters into a canonical string for signing.
+ * Serializes request parameters into a newline-delimited payload for signing.
+ *
+ * Note: This does not normalize method casing or query parameter ordering.
+ * Callers must provide already-normalized values when deterministic
+ * cross-client signatures are required.
  */
-function getCanonicalString(params: {
+function getSigningPayload(params: {
     method: string;
     path: string;
     query: string;
@@ -89,7 +93,7 @@ export function signRequest(params: {
     timestamp: number;
     privateKey: string;
 }): string {
-    const canonical = getCanonicalString(params);
+    const canonical = getSigningPayload(params);
     const message = new TextEncoder().encode(canonical);
     const privateKeyBytes = base64ToBytes(params.privateKey);
 
@@ -108,7 +112,7 @@ export function verifyRequest(params: {
     signature: string;
     publicKey: string;
 }): boolean {
-    const canonical = getCanonicalString(params);
+    const canonical = getSigningPayload(params);
     const message = new TextEncoder().encode(canonical);
     const signatureBytes = base64ToBytes(params.signature);
     const publicKeyBytes = base64ToBytes(params.publicKey);

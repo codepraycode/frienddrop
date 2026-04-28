@@ -304,9 +304,9 @@ No authentication required.
 
 ```json
 {
-    "status": "ok",
-    "deviceId": "550e8400-e29b-41d4-a716-446655440000",
-    "username": "olumide"
+    "status": "UP",
+    "service": "host-agent",
+    "timestamp": "2026-04-01T12:00:00.000Z"
 }
 ```
 
