@@ -119,7 +119,7 @@ frienddrop/
 │   │       ├── index.ts          # Entry point — starts Express, initialises DB
 │   │       ├── config.ts         # Loads env vars, validates them
 │   │       ├── db/
-│   │       │   ├── client.ts     # better-sqlite3 database connection singleton
+│   │       │   ├── client.ts     # @libsql/client database connection singleton
 │   │       │   ├── migrations/
 │   │       │   │   └── 001_initial.sql
 │   │       │   └── repositories/
