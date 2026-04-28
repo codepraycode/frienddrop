@@ -10,7 +10,7 @@
         "format": "prettier --write \"**/*.{ts,tsx,js,cjs,mjs,css,html,json}\"",
         "preview": "vite preview",
         "test": "echo \"No test specified\"",
-        "typecheck": "tsc --noEmit"
+        "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit"
     },
     "dependencies": {
         "@frienddrop/shared": "workspace:*",

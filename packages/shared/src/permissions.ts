@@ -12,7 +12,7 @@ export enum AccessLevelEnum {
 /**
  * Checks if the given access level allows reading/listing files.
  */
-export function canRead(level: AccessLevel | string): boolean {
+export function canRead(level: AccessLevel): boolean {
     return (
         level === AccessLevelEnum.READ ||
         level === AccessLevelEnum.READ_DOWNLOAD
@@ -22,7 +22,7 @@ export function canRead(level: AccessLevel | string): boolean {
 /**
  * Checks if the given access level allows downloading files.
  */
-export function canDownload(level: AccessLevel | string): boolean {
+export function canDownload(level: AccessLevel): boolean {
     return level === AccessLevelEnum.READ_DOWNLOAD;
 }
 

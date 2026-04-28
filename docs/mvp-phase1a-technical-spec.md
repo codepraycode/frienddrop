@@ -219,7 +219,7 @@ PRAGMA foreign_keys = ON;
 
 -- Identity: exactly one row ever exists
 CREATE TABLE IF NOT EXISTS identity (
-  id          TEXT PRIMARY KEY DEFAULT 'local',
+  id INTEGER PRIMARY KEY CHECK (id = 1),
   username    TEXT NOT NULL,
   device_id   TEXT NOT NULL UNIQUE,
   public_key  TEXT NOT NULL,
@@ -440,7 +440,7 @@ Algorithm: **Ed25519**.
 ```typescript
 // Illustrative pseudocode only — actual package names and helper APIs may differ
 
-import { ed25519 } from '@noble/curves/ed25519';
+import { ed25519 } from "@noble/curves/ed25519";
 
 export async function generateKeypairExample(): Promise<{
     publicKey: string;
@@ -449,8 +449,8 @@ export async function generateKeypairExample(): Promise<{
     const privateKeyBytes = ed25519.utils.randomSecretKey();
     const publicKeyBytes = ed25519.getPublicKey(privateKeyBytes);
     return {
-        privateKey: Buffer.from(privateKeyBytes).toString('base64'),
-        publicKey: Buffer.from(publicKeyBytes).toString('base64'),
+        privateKey: Buffer.from(privateKeyBytes).toString("base64"),
+        publicKey: Buffer.from(publicKeyBytes).toString("base64"),
     };
 }
 ```
@@ -480,7 +480,7 @@ export function encodeInviteCode(identity: {
     username: string;
 }): string {
     const payload = JSON.stringify(identity);
-    return Buffer.from(payload).toString('base64url');
+    return Buffer.from(payload).toString("base64url");
 }
 
 export function decodeInviteCode(code: string): {
@@ -488,7 +488,7 @@ export function decodeInviteCode(code: string): {
     deviceId: string;
     username: string;
 } {
-    const payload = Buffer.from(code, 'base64url').toString('utf8');
+    const payload = Buffer.from(code, "base64url").toString("utf8");
     return JSON.parse(payload);
 }
 ```
@@ -531,11 +531,11 @@ export async function signRequest(params: {
         params.path,
         params.query,
         params.timestamp,
-    ].join('\n');
+    ].join("\n");
     const message = new TextEncoder().encode(canonical);
-    const privateKeyBytes = Buffer.from(params.privateKey, 'base64');
+    const privateKeyBytes = Buffer.from(params.privateKey, "base64");
     const signatureBytes = await ed.signAsync(message, privateKeyBytes);
-    return Buffer.from(signatureBytes).toString('base64');
+    return Buffer.from(signatureBytes).toString("base64");
 }
 
 export async function verifyRequest(params: {
@@ -551,10 +551,10 @@ export async function verifyRequest(params: {
         params.path,
         params.query,
         params.timestamp,
-    ].join('\n');
+    ].join("\n");
     const message = new TextEncoder().encode(canonical);
-    const signatureBytes = Buffer.from(params.signature, 'base64');
-    const publicKeyBytes = Buffer.from(params.publicKey, 'base64');
+    const signatureBytes = Buffer.from(params.signature, "base64");
+    const publicKeyBytes = Buffer.from(params.publicKey, "base64");
     return ed.verifyAsync(signatureBytes, message, publicKeyBytes);
 }
 ```
@@ -565,23 +565,23 @@ export async function verifyRequest(params: {
 // packages/host-agent/src/middleware/auth.middleware.ts
 
 export async function authMiddleware(req, res, next) {
-    const deviceId = req.headers['x-device-id'];
-    const signature = req.headers['x-signature'];
-    const timestamp = Number(req.headers['x-timestamp']);
+    const deviceId = req.headers["x-device-id"];
+    const signature = req.headers["x-signature"];
+    const timestamp = Number(req.headers["x-timestamp"]);
 
     if (!deviceId || !signature || !timestamp) {
-        return res.status(401).json({ error: { code: 'MISSING_AUTH' } });
+        return res.status(401).json({ error: { code: "MISSING_AUTH" } });
     }
 
     // Reject stale requests (replay attack prevention)
     if (Math.abs(Date.now() - timestamp) > 60_000) {
-        return res.status(401).json({ error: { code: 'STALE_REQUEST' } });
+        return res.status(401).json({ error: { code: "STALE_REQUEST" } });
     }
 
     // Look up contact by deviceId
     const contact = contactRepo.findByDeviceId(deviceId);
     if (!contact) {
-        return res.status(404).json({ error: { code: 'CONTACT_NOT_FOUND' } });
+        return res.status(404).json({ error: { code: "CONTACT_NOT_FOUND" } });
     }
 
     // Verify signature against pinned public key
@@ -595,7 +595,7 @@ export async function authMiddleware(req, res, next) {
     });
 
     if (!valid) {
-        return res.status(401).json({ error: { code: 'INVALID_SIGNATURE' } });
+        return res.status(401).json({ error: { code: "INVALID_SIGNATURE" } });
     }
 
     req.contact = contact; // Attach for downstream use
@@ -676,10 +676,10 @@ No fallback in Phase 1A — that is Phase 1B's job.
 ```typescript
 // packages/host-agent/src/services/file-tree.service.ts
 
-import fs from 'fs';
-import path from 'path';
-import { FileNode } from '@frienddrop/shared';
-import mime from 'mime-types';
+import fs from "fs";
+import path from "path";
+import { FileNode } from "@frienddrop/shared";
+import mime from "mime-types";
 
 const MAX_DEPTH = 15;
 const MAX_ITEMS_PER_DIR = 500;
@@ -701,7 +701,7 @@ export function walkDirectory(rootPath: string, currentDepth = 0): FileNode[] {
         if (entry.isDirectory()) {
             return {
                 name: entry.name,
-                type: 'directory',
+                type: "directory",
                 size: null,
                 mimeType: null,
                 children: walkDirectory(fullPath, currentDepth + 1),
@@ -710,7 +710,7 @@ export function walkDirectory(rootPath: string, currentDepth = 0): FileNode[] {
             const stat = fs.statSync(fullPath);
             return {
                 name: entry.name,
-                type: 'file',
+                type: "file",
                 size: stat.size,
                 mimeType: mime.lookup(entry.name) || null,
                 children: null,
@@ -750,7 +750,7 @@ export function isSafePath(
 // packages/host-agent/src/routes/download.route.ts
 
 router.get(
-    '/download',
+    "/download",
     authMiddleware,
     permissionMiddleware,
     async (req, res) => {
@@ -760,37 +760,37 @@ router.get(
 
         // Compute and attach checksum
         const checksum = await computeChecksum(filePath);
-        res.setHeader('X-Checksum-SHA256', checksum);
-        res.setHeader('Accept-Ranges', 'bytes');
+        res.setHeader("X-Checksum-SHA256", checksum);
+        res.setHeader("Accept-Ranges", "bytes");
         res.setHeader(
-            'Content-Type',
-            mime.lookup(filePath) || 'application/octet-stream',
+            "Content-Type",
+            mime.lookup(filePath) || "application/octet-stream",
         );
 
-        const rangeHeader = req.headers['range'];
+        const rangeHeader = req.headers["range"];
         if (rangeHeader) {
             const [startStr, endStr] = rangeHeader
-                .replace('bytes=', '')
-                .split('-');
+                .replace("bytes=", "")
+                .split("-");
             const start = parseInt(startStr, 10);
             const end = endStr ? parseInt(endStr, 10) : totalBytes - 1;
 
             if (start >= totalBytes || end >= totalBytes) {
                 return res
                     .status(416)
-                    .setHeader('Content-Range', `bytes */${totalBytes}`)
+                    .setHeader("Content-Range", `bytes */${totalBytes}`)
                     .end();
             }
 
             res.status(206);
             res.setHeader(
-                'Content-Range',
+                "Content-Range",
                 `bytes ${start}-${end}/${totalBytes}`,
             );
-            res.setHeader('Content-Length', end - start + 1);
+            res.setHeader("Content-Length", end - start + 1);
             fs.createReadStream(filePath, { start, end }).pipe(res);
         } else {
-            res.setHeader('Content-Length', totalBytes);
+            res.setHeader("Content-Length", totalBytes);
             fs.createReadStream(filePath).pipe(res);
         }
     },
@@ -812,7 +812,7 @@ interface DownloadState {
     totalBytes: number;
     bytesReceived: number;
     checksum: string;
-    status: 'IN_PROGRESS' | 'PAUSED' | 'COMPLETE' | 'FAILED';
+    status: "IN_PROGRESS" | "PAUSED" | "COMPLETE" | "FAILED";
     startedAt: number;
     completedAt: number | null;
     localPath: string;
@@ -834,7 +834,7 @@ Resume logic:
 
 async function resume(manifest: DownloadState, hostUrl: string) {
     const headers = buildAuthHeaders(); // Signs the request
-    headers['Range'] = `bytes=${manifest.bytesReceived}-`;
+    headers["Range"] = `bytes=${manifest.bytesReceived}-`;
 
     const response = await fetch(
         `${hostUrl}/download?path=${encodeURIComponent(manifest.filePath)}`,
@@ -860,10 +860,10 @@ async function resume(manifest: DownloadState, hostUrl: string) {
     }
 
     // Verify checksum
-    const expectedChecksum = response.headers.get('X-Checksum-SHA256');
+    const expectedChecksum = response.headers.get("X-Checksum-SHA256");
     const actualChecksum = await computeFileChecksum(manifest.localPath);
     if (expectedChecksum !== actualChecksum) {
-        throw new Error('Checksum mismatch — file may be corrupted');
+        throw new Error("Checksum mismatch — file may be corrupted");
     }
 
     markComplete(manifest.id);
@@ -877,19 +877,19 @@ Manifests are persisted to IndexedDB so downloads survive page refreshes:
 ```typescript
 // packages/client/src/db/cache.db.ts
 
-const db = await openDB('frienddrop', 1, {
+const db = await openDB("frienddrop", 1, {
     upgrade(db) {
-        db.createObjectStore('file-tree-cache', { keyPath: 'id' });
-        db.createObjectStore('download-manifests', { keyPath: 'id' });
+        db.createObjectStore("file-tree-cache", { keyPath: "id" });
+        db.createObjectStore("download-manifests", { keyPath: "id" });
     },
 });
 
 export async function saveManifest(manifest: DownloadState) {
-    await db.put('download-manifests', manifest);
+    await db.put("download-manifests", manifest);
 }
 
 export async function loadManifests(): Promise<DownloadState[]> {
-    return db.getAll('download-manifests');
+    return db.getAll("download-manifests");
 }
 ```
 
@@ -917,7 +917,7 @@ export function permissionMiddleware(requiredLevel: AccessLevel) {
         );
 
         if (!matchingRoot) {
-            return res.status(400).json({ error: { code: 'INVALID_PATH' } });
+            return res.status(400).json({ error: { code: "INVALID_PATH" } });
         }
 
         // Permission check
@@ -926,12 +926,12 @@ export function permissionMiddleware(requiredLevel: AccessLevel) {
             matchingRoot.path,
         );
 
-        if (!share || share.status === 'REVOKED') {
-            return res.status(403).json({ error: { code: 'NO_ACCESS' } });
+        if (!share || share.status === "REVOKED") {
+            return res.status(403).json({ error: { code: "NO_ACCESS" } });
         }
 
-        if (requiredLevel === 'READ_DOWNLOAD' && share.accessLevel === 'READ') {
-            return res.status(403).json({ error: { code: 'READ_ONLY' } });
+        if (requiredLevel === "READ_DOWNLOAD" && share.accessLevel === "READ") {
+            return res.status(403).json({ error: { code: "READ_ONLY" } });
         }
 
         next();
@@ -988,7 +988,7 @@ interface CachedFileTree {
 
 export function useFileTree(contactId: string, path: string) {
     return useQuery({
-        queryKey: ['file-tree', contactId, path],
+        queryKey: ["file-tree", contactId, path],
         queryFn: async () => {
             try {
                 const tree = await hostApi.getFileTree(contactId, path);

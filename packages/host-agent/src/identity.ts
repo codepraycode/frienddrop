@@ -2,15 +2,45 @@ import { db } from './db/index.js';
 import { generateKeypair } from '@frienddrop/shared';
 import os from 'os';
 
+export interface PublicIdentity {
+    id: number;
+    deviceId: string;
+    username: string;
+    publicKey: string;
+    createdAt: number;
+}
+
+type StoredIdentityRow = PublicIdentity & {
+    privateKey: string;
+};
+
+async function getStoredIdentity(): Promise<StoredIdentityRow | undefined> {
+    const existing = await db.execute(
+        'SELECT id, deviceId, username, publicKey, privateKey, createdAt FROM identity WHERE id = 1',
+    );
+
+    if (existing.rows.length === 0) {
+        return undefined;
+    }
+
+    return existing.rows[0] as StoredIdentityRow;
+}
+
 /**
  * Initializes or retrieves the local device identity.
  * If no identity exists, generates a new Ed25519 keypair and random device ID.
  */
-export async function getOrInitializeIdentity() {
-    const existing = await db.execute('SELECT * FROM identity WHERE id = 1');
+export async function getOrInitializeIdentity(): Promise<PublicIdentity> {
+    const existing = await getStoredIdentity();
 
-    if (existing.rows.length > 0) {
-        return existing.rows[0];
+    if (existing) {
+        return {
+            id: existing.id,
+            deviceId: existing.deviceId,
+            username: existing.username,
+            publicKey: existing.publicKey,
+            createdAt: existing.createdAt,
+        };
     }
 
     console.log('No local identity found. Generating new Ed25519 keypair...');
@@ -30,5 +60,19 @@ export async function getOrInitializeIdentity() {
         deviceId,
         username,
         publicKey,
+        createdAt: timeCreated,
     };
+}
+
+/**
+ * Retrieves the stored private key for signing operations.
+ */
+export async function getIdentityPrivateKey(): Promise<string> {
+    const existing = await getStoredIdentity();
+
+    if (!existing) {
+        throw new Error('Local identity has not been initialized.');
+    }
+
+    return existing.privateKey;
 }
