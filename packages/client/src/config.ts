@@ -9,7 +9,7 @@ function validateEnv() {
         const port = Number(portStr.trim());
         if (
             isNaN(port) ||
-            Number.isInteger(port) ||
+            !Number.isInteger(port) ||
             port <= 0 ||
             port > 65535
         ) {
