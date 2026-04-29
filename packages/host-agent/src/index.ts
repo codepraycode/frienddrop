@@ -1,12 +1,19 @@
 import express from 'express';
 import { initDb } from './db/index.js';
+import { getOrInitializeIdentity } from './identity.js';
 import { healthCheck } from './routes/health.js';
 
-const PORT = Number(process.env.PORT) || 4000;
+import { config } from './config.js';
 
 async function bootstrap() {
     // Initialize SQLite database
     await initDb();
+
+    // Ensure device identity is initialized
+    const identity = await getOrInitializeIdentity();
+    console.log(
+        `Identity initialized for device: ${identity.deviceId} (${identity.username})`,
+    );
 
     const app = express();
 
@@ -21,9 +28,9 @@ async function bootstrap() {
         res.status(404).json({ error: 'Not Found' });
     });
 
-    app.listen(PORT, () => {
+    app.listen(config.PORT, () => {
         console.log(
-            `FriendDrop host-agent running on http://localhost:${PORT}`,
+            `FriendDrop host-agent running on http://localhost:${config.PORT}`,
         );
     });
 }
