@@ -14,7 +14,7 @@ function validateEnv() {
         const port = Number(process.env.HOST_PORT);
         if (
             isNaN(port) ||
-            Number.isInteger(port) ||
+            !Number.isInteger(port) ||
             port <= 0 ||
             port > 65535
         ) {
